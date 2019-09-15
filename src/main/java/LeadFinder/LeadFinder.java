@@ -22,54 +22,30 @@ import java.util.regex.Pattern;
 public class LeadFinder {
 
     public static void main(String[] args){
-        System.setProperty("webdriver.chrome.driver","/Users/vinaypatel/APIWork/chromedriver");
+        System.setProperty("webdriver.chrome.driver","/Users/vinaypatel/deal-finder/chromedriver");
         WebDriver driver = new ChromeDriver();
 
         String[] areas = new String[]{
                 "Chicago, IL",
                 "Houston, TX",
-                "Phoenix, AZ",
                 "Philadelphia, PA",
                 "San Antonio, TX",
-                "San Diego, CA",
                 "Dallas, TX",
-                "San Jose, CA",
-                "Austin, TX",
                 "Jacksonville, FL",
                 "Fort Worth, TX",
                 "Columbus, OH",
-                "San Francisco, CA",
-                "Charlotte, NC",
                 "Indianapolis, IN",
-                "Seattle, WA",
-                "Denver, CO",
-                "Washington, DC",
-                "Boston, MA",
                 "El Paso, TX",
                 "Detroit, MI",
-                "Nashville, TN",
-                "Portland, OR",
                 "Memphis, TN",
                 "Oklahoma City, OK",
-                "Las Vegas, NV",
                 "Louisville, KY",
                 "Baltimore, MD",
                 "Milwaukee, WI",
                 "Albuquerque, NM",
-                "Tucson, AZ",
-                "Fresno, CA",
-                "Mesa, AZ",
-                "Sacramento, CA",
                 "Atlanta, GA",
                 "Kansas City, MO",
-                "Colorado Springs, CO",
-                "Miami, FL",
-                "Raleigh, NC",
                 "Omaha, NE",
-                "Long Beach, CA",
-                "Virginia Beach, VA",
-                "Oakland, CA",
-                "Minneapolis, MN",
                 "Tulsa, OK",
                 "Arlington, TX",
                 "Tampa, FL",
@@ -77,74 +53,29 @@ public class LeadFinder {
                 "Wichita, KS",
                 "Cleveland, OH",
                 "Bakersfield, CA",
-                "Aurora, CO",
-                "Anaheim, CA",
-                "Honolulu, HI",
-                "Santa Ana, CA",
-                "Riverside, CA",
                 "Corpus Christi, TX",
                 "Lexington, KY",
-                "Stockton, CA",
-                "Henderson, NV",
-                "Saint Paul, MN",
                 "St. Louis, MO",
                 "Cincinnati, OH",
-                "Pittsburgh, PA",
-                "Greensboro, NC",
-                "Anchorage, AK",
-                "Plano, TX",
-                "Lincoln, NE",
                 "Orlando, FL",
-                "Irvine, CA",
-                "Newark, NJ",
                 "Toledo, OH",
-                "Durham, NC",
-                "Chula Vista, CA",
                 "Fort Wayne, IN",
-                "Jersey City, NJ",
                 "St. Petersburg, FL",
-                "Laredo, TX",
-                "Madison, WI",
-                "Chandler, AZ",
                 "Buffalo, NY",
                 "Lubbock, TX",
-                "Scottsdale, AZ",
-                "Reno, NV",
-                "Glendale, AZ",
-                "Gilbert, AZ",
-                "Winston-Salem, NC",
-                "North Las Vegas, NV",
                 "Norfolk, VA",
                 "Chesapeake, VA",
-                "Garland, TX",
                 "Irving, TX",
-                "Hialeah, FL",
-                "Fremont, CA",
-                "Boise, ID",
                 "Richmond, VA",
                 "Baton Rouge, LA",
-                "Spokane, WA",
                 "Des Moines, IA",
-                "Tacoma, WA",
-                "San Bernardino, CA",
-                "Modesto, CA",
-                "Fontana, CA",
-                "Santa Clarita, CA",
                 "Birmingham, AL",
-                "Oxnard, CA",
                 "Fayetteville, NC",
-                "Moreno Valley, CA",
                 "Rochester, NY",
-                "Glendale, CA",
-                "Huntington Beach, CA",
-                "Salt Lake City, UT",
                 "Grand Rapids, MI",
                 "Amarillo, TX",
-                "Yonkers, NY",
-                "Aurora, IL",
                 "Montgomery, AL",
                 "Akron, OH",
-                //////////////////////
                 "Little Rock, AR",
                 "Huntsville, AL",
                 "Augusta, GA",
@@ -170,7 +101,6 @@ public class LeadFinder {
             System.exit(1);
         }
 
-        List<String> acceptableArea = new ArrayList<String>();
         for(String area : areas) {
             System.out.println("Analyzing... " + area);
             String searchUrl = LeadConstants.BASE_URL + LeadConstants.urlifyCity(area) + LeadConstants.SEARCH_CRITERIA;
@@ -186,9 +116,6 @@ public class LeadFinder {
             }
             List<WebElement> allLeads = driver.findElements(By.xpath(LeadConstants.LEAD_DETAIL_CARD_XPATH));
             System.out.println("ItemList: " + allLeads.size());
-            if(allLeads.size() > 10){
-                acceptableArea.add(area);
-            }
             List<Lead> validLeads = getValidLeads(allLeads, area);
             System.out.println("ValidList: " + validLeads.size());
 
@@ -221,10 +148,6 @@ public class LeadFinder {
             }
         }
         driver.quit();
-        System.out.println("Acceptable Cities: ");
-        for(String s : acceptableArea){
-            System.out.println(s);
-        }
     }
 
     private static void waitForLoad(WebDriver driver) {

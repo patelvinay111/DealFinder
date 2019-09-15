@@ -33,7 +33,7 @@ public class DealAnalyzer {
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/dealfinder", "postgres", "l");
-            c.setAutoCommit(false);
+            c.setAutoCommit(true);
 
             stmt = c.createStatement();
             ResultSet rs = stmt.executeQuery( "SELECT address, asking_price " +
