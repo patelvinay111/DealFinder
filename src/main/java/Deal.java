@@ -14,10 +14,12 @@ public class Deal implements Comparable<Deal>{
     private double leasingFee;
     private double insurance;
     private double maintenanceCost;
+    private double noi;
     private double capitalReserve;
     private double mortgageCost;
-    private double avgEquityEarn;
+    private double minEquityEarn;
     private double cashFlow;
+    private Double instantEquityEarn;
 
     public Deal(String name, double propertyPrice, double rent) {
         this.name = name;
@@ -123,6 +125,14 @@ public class Deal implements Comparable<Deal>{
         this.maintenanceCost = maintenanceCost;
     }
 
+    public double getNoi() {
+        return noi;
+    }
+
+    public void setNoi(double noi) {
+        this.noi = noi;
+    }
+
     public double getCapitalReserve() { return capitalReserve; }
 
     public void setCapitalReserve(double capitalReserve) { this.capitalReserve = capitalReserve; }
@@ -135,12 +145,12 @@ public class Deal implements Comparable<Deal>{
         this.mortgageCost = mortgageCost;
     }
 
-    public double getAvgEquityEarn() {
-        return avgEquityEarn;
+    public double getMinEquityEarn() {
+        return minEquityEarn;
     }
 
-    public void setAvgEquityEarn(double avgEquityEarn) {
-        this.avgEquityEarn = avgEquityEarn;
+    public void setMinEquityEarn(double minEquityEarn) {
+        this.minEquityEarn = minEquityEarn;
     }
 
     public double getCashFlow() {
@@ -149,6 +159,14 @@ public class Deal implements Comparable<Deal>{
 
     public void setCashFlow(double cashFlow) {
         this.cashFlow = cashFlow;
+    }
+
+    public Double getInstantEquityEarn() {
+        return instantEquityEarn;
+    }
+
+    public void setInstantEquityEarn(Double instantEquityEarn) {
+        this.instantEquityEarn = instantEquityEarn;
     }
 
     @Override
@@ -164,10 +182,12 @@ public class Deal implements Comparable<Deal>{
                 leasingFee + DealConstants.DELIM +
                 insurance + DealConstants.DELIM +
                 maintenanceCost + DealConstants.DELIM +
+                noi + DealConstants.DELIM +
                 capitalReserve + DealConstants.DELIM +
                 mortgageCost + DealConstants.DELIM +
-                avgEquityEarn + DealConstants.DELIM +
-                cashFlow;
+                minEquityEarn + DealConstants.DELIM +
+                cashFlow + DealConstants.DELIM +
+                instantEquityEarn;
     }
 
     public String prettyPrint() {
@@ -183,9 +203,11 @@ public class Deal implements Comparable<Deal>{
                 "Leasing Fee: " + leasingFee + "\n" +
                 "Insurance: " + insurance + "\n" +
                 "Maintenance Reserve: " + maintenanceCost + "\n" +
+                "Net Operating Income: " + noi + "\n" +
                 "Capital Reserve: " + capitalReserve + "\n" +
                 "Mortgage: " + mortgageCost + "\n" +
-                "Average Equity Paydown: " + avgEquityEarn + "\n" +
-                "Cash Flow: " + cashFlow;
+                "Minimum Equity Paydown: " + minEquityEarn + "\n" +
+                "Cash Flow: " + cashFlow + "\n" +
+                "Instant Equity Earn: " + instantEquityEarn;
     }
 }

@@ -39,14 +39,20 @@ public class DealUtil {
 
     public static double calculateInsurance(double propertyPrice){
         if(propertyPrice <= 150000){
-            return 420/12;
+            return 600/12;
         } else if(propertyPrice > 150000 && propertyPrice <= 300000) {
-            return 500/12;
+            return 680/12;
         } else if(propertyPrice > 300000 && propertyPrice <= 450000){
-            return 650/12;
+            return 830/12;
         } else {
-            return 750/12;
+            return 930/12;
         }
+    }
+
+    public static double calculateMinEquityEarn(double propertyPrice, double mortgagePayment) {
+        double initBalance =  (1-DealConstants.DOWNPAYMENT)*propertyPrice;
+        double firstMonthInterest = (initBalance * DealConstants.INTEREST_RATE) / 12;
+        return mortgagePayment - firstMonthInterest;
     }
 
     public static String printSchema() {
@@ -62,7 +68,7 @@ public class DealUtil {
                 "Insurance" + DealConstants.DELIM +
                 "Maintenance Cost("+DealConstants.MAINTENANCE_COST*100+"%)" + DealConstants.DELIM +
                 "Mortgage Payments("+DealConstants.INTEREST_RATE*100+"%)" + DealConstants.DELIM +
-                "Average Monthly Equity Paydown" + DealConstants.DELIM +
+                "Minimum Monthly Equity Paydown" + DealConstants.DELIM +
                 "Monthly Cashflow";
     }
 

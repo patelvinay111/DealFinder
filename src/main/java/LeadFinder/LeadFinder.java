@@ -5,6 +5,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -22,71 +23,28 @@ import java.util.regex.Pattern;
 public class LeadFinder {
 
     public static void main(String[] args){
-        System.setProperty("webdriver.chrome.driver","/Users/vinaypatel/deal-finder/chromedriver");
-        WebDriver driver = new ChromeDriver();
+        //System.setProperty("webdriver.chrome.driver","/Users/vinaypatel/deal-finder/chromedriver");
+        //System.setProperty("webdriver.gecko.driver", "/Users/vinaypatel/deal-finder/Firefox.app");
+        WebDriver driver = new FirefoxDriver();
 
         String[] areas = new String[]{
-                "Chicago, IL",
-                "Houston, TX",
-                "Philadelphia, PA",
+                "Dallas, TX"
+                /*"Houston, TX",
                 "San Antonio, TX",
                 "Dallas, TX",
-                "Jacksonville, FL",
                 "Fort Worth, TX",
-                "Columbus, OH",
-                "Indianapolis, IN",
                 "El Paso, TX",
-                "Detroit, MI",
                 "Memphis, TN",
                 "Oklahoma City, OK",
-                "Louisville, KY",
-                "Baltimore, MD",
-                "Milwaukee, WI",
-                "Albuquerque, NM",
                 "Atlanta, GA",
-                "Kansas City, MO",
-                "Omaha, NE",
-                "Tulsa, OK",
                 "Arlington, TX",
-                "Tampa, FL",
-                "New Orleans, LA",
-                "Wichita, KS",
-                "Cleveland, OH",
-                "Bakersfield, CA",
                 "Corpus Christi, TX",
-                "Lexington, KY",
-                "St. Louis, MO",
-                "Cincinnati, OH",
-                "Orlando, FL",
-                "Toledo, OH",
-                "Fort Wayne, IN",
-                "St. Petersburg, FL",
-                "Buffalo, NY",
                 "Lubbock, TX",
-                "Norfolk, VA",
-                "Chesapeake, VA",
                 "Irving, TX",
-                "Richmond, VA",
-                "Baton Rouge, LA",
-                "Des Moines, IA",
                 "Birmingham, AL",
-                "Fayetteville, NC",
-                "Rochester, NY",
-                "Grand Rapids, MI",
                 "Amarillo, TX",
                 "Montgomery, AL",
-                "Akron, OH",
-                "Little Rock, AR",
-                "Huntsville, AL",
-                "Augusta, GA",
-                "Columbus, GA",
-                "Tallahassee, FL",
-                "Overland Park, KS",
-                "Mobile, AL",
-                "Knoxville, TN",
-                "Sioux Falls, SD",
-                "Chattanooga, TN",
-                "Newport News, VA"
+                "Huntsville, AL"*/
         };
 
         Connection conn;
@@ -114,6 +72,7 @@ public class LeadFinder {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            System.out.println(driver.getPageSource());
             List<WebElement> allLeads = driver.findElements(By.xpath(LeadConstants.LEAD_DETAIL_CARD_XPATH));
             System.out.println("ItemList: " + allLeads.size());
             List<Lead> validLeads = getValidLeads(allLeads, area);
@@ -164,6 +123,7 @@ public class LeadFinder {
     private static int getRandomNumberInRange() {
         Random r = new Random();
         return r.nextInt((LeadConstants.MAX_WAIT - LeadConstants.MIN_WAIT) + 1) + LeadConstants.MIN_WAIT;
+        //return 10000000;
     }
 
     private static List<Lead> getValidLeads(List<WebElement> allLeads, String area) {

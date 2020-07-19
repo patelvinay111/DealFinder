@@ -36,15 +36,17 @@ public class DealAnalyzer {
             c.setAutoCommit(true);
 
             stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery( "SELECT address, asking_price " +
+            ResultSet rs = stmt.executeQuery( "SELECT street, zipcode, asking_price " +
                     "FROM leads " +
-                    "WHERE address " +
-                    "NOT IN (SELECT property_name FROM deals) " +
+                    "WHERE street " +
+                    "NOT IN (SELECT SPLIT_PART(property_name, ',', 1) FROM deals) " +
+                    "AND zipcode " +
+                    "NOT IN (SELECT SPLIT_PART(property_name, ',', 2) FROM deals) " +
                     "ORDER BY random() " +
-                    "LIMIT 500;" );
+                    "LIMIT 900;" );
             while (rs.next()) {
-                String address = rs.getString("address");
-                double  price = rs.getDouble("asking_price");
+                String address = rs.getString("street") + ", " + rs.getString("zipcode");
+                double price = rs.getDouble("asking_price");
                 leads.put(address, price);
             }
             rs.close();
@@ -59,6 +61,7 @@ public class DealAnalyzer {
 
             int returnCode = Integer.parseInt(doc.getElementsByTagName("code").item(0).getTextContent());
             if(returnCode == 0){
+                NodeList zestimate = doc.getElementsByTagName("zestimate");
                 NodeList rentZestimate = doc.getElementsByTagName("rentzestimate");
                 String zillowPage = doc.getElementsByTagName("mapthishome").item(0).getTextContent() == null ? "<N/A>" :
                         doc.getElementsByTagName("mapthishome").item(0).getTextContent();
@@ -66,20 +69,38 @@ public class DealAnalyzer {
                         doc.getElementsByTagName("comparables").item(0).getTextContent();
 
                 if (rentZestimate.getLength() > 0) {
+                    Element zEle = (Element)zestimate.item(0);
+                    String strZestimate = zEle.getElementsByTagName("amount").item(0).getTextContent();
                     Element rzEle = (Element)rentZestimate.item(0);
                     String strRentZestimate = rzEle.getElementsByTagName("amount").item(0).getTextContent();
                     if(strRentZestimate != null && strRentZestimate.trim() != ""){
                         double propertyPrice = leads.get(propertyName);
                         double rent = Double.parseDouble(strRentZestimate);
-                        Deal deal = createDeal(propertyName, propertyPrice, rent, zillowPage, comparables);
+                        Double propertyValue;
+                        Double instantEquity;
+                        try {
+                            propertyValue = Double.parseDouble(strZestimate);
+                            instantEquity = propertyValue - propertyPrice;
+                        } catch (NumberFormatException nfe) {
+                            instantEquity = null;
+                        }
+                        Deal deal = createDeal(
+                                propertyName,
+                                propertyPrice,
+                                rent,
+                                instantEquity,
+                                zillowPage,
+                                comparables);
                         String insertStmt = "INSERT INTO " +
-                                "deals(property_name, details_page, comps, asking_price, rent, vacancy_cost, property_tax, property_managent, leasing_fee, insurance, maintenance_cost, capital_reserve, mortgage_payment, avg_equity_earn, cash_flow) " +
+                                "deals(property_name, details_page, comps, asking_price, rent, vacancy_cost, property_tax, property_managent, leasing_fee, " +
+                                "insurance, maintenance_cost, capital_reserve, mortgage_payment, min_equity_earn, cash_flow, instant_equity_earn, noi) " +
                                 "VALUES " +
                                 "(" +
-                                String.format("'%s', '%s', '%s', %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f", deal.getName(), deal.getDetailsPage(),
+                                String.format("'%s', '%s', '%s', %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f", deal.getName(), deal.getDetailsPage(),
                                         deal.getComps(), deal.getPropertyPrice(), deal.getRent(), deal.getVacancyCost(), deal.getPropertyTax(),
                                         deal.getPropertyManagement(), deal.getLeasingFee(), deal.getInsurance(), deal.getMaintenanceCost(),
-                                        deal.getCapitalReserve(), deal.getMortgageCost(), deal.getAvgEquityEarn(), deal.getCashFlow()) +
+                                        deal.getCapitalReserve(), deal.getMortgageCost(), deal.getMinEquityEarn(), deal.getCashFlow(),
+                                        deal.getInstantEquityEarn(), deal.getNoi()) +
                                 ") " +
                                 "ON conflict (property_name) DO " +
                                 "UPDATE " +
@@ -95,8 +116,10 @@ public class DealAnalyzer {
                                 "maintenance_cost = excluded.maintenance_cost, " +
                                 "capital_reserve = excluded.capital_reserve, " +
                                 "mortgage_payment = excluded.mortgage_payment, " +
-                                "avg_equity_earn = excluded.avg_equity_earn, " +
-                                "cash_flow = excluded.cash_flow;";
+                                "min_equity_earn = excluded.min_equity_earn, " +
+                                "cash_flow = excluded.cash_flow, " +
+                                "instant_equity_earn = excluded.instant_equity_earn, " +
+                                "noi = excluded.noi;";
                         try {
                             stmt.executeUpdate(insertStmt);
                         } catch (Exception e) {
@@ -118,14 +141,14 @@ public class DealAnalyzer {
     public static Document getAPIDocument(String address) {
         try {
             String street = address.substring(0, address.indexOf(", "));
-            String cityState = address.substring(address.indexOf(", ")+2);
+            String zip = address.substring(address.indexOf(", ")+2);
             String encodedStreet = URLEncoder.encode(street, "UTF-8");
-            String encodedCityState = URLEncoder.encode(cityState, "UTF-8");
+            String encodedZip = URLEncoder.encode(zip, "UTF-8");
 
             String url =
                     "http://www.zillow.com/webservice/GetSearchResults.htm?zws-id=" + DealConstants.API_KEY
                             +"&address="+encodedStreet
-                            +"&citystatezip="+encodedCityState
+                            +"&citystatezip="+encodedZip
                             +"&rentzestimate=true";
             LOGGER.info("API URL: " + url);
             URL obj = new URL(url);
@@ -144,7 +167,7 @@ public class DealAnalyzer {
         return null;
     }
 
-    private static Deal createDeal(String propertyName, double propertyPrice, double rent, String zillowPage, String comparables) {
+    private static Deal createDeal(String propertyName, double propertyPrice, double rent,  Double instantEquity, String zillowPage, String comparables) {
         int zip = Integer.parseInt(propertyName.substring(propertyName.lastIndexOf(" ") + 1));
         Deal deal = new Deal(propertyName, propertyPrice, rent);
         deal.setDetailsPage(zillowPage);
@@ -155,20 +178,26 @@ public class DealAnalyzer {
         deal.setLeasingFee(rent*DealConstants.LEASING_FEE);
         deal.setInsurance(DealUtil.calculateInsurance(propertyPrice));
         deal.setMaintenanceCost(rent*DealConstants.MAINTENANCE_COST);
-        deal.setCapitalReserve(rent*DealConstants.CAPITAL_RESERVE);
-        deal.setMortgageCost(DealUtil.calculateMortgagePayment(propertyPrice));
-        deal.setAvgEquityEarn(propertyPrice*(1-DealConstants.DOWNPAYMENT)/360);
-        deal.setCashFlow(
+        deal.setNoi(
                 deal.getRent()
-                - (
+                        - (
                         deal.getVacancyCost()
                         + deal.getPropertyTax()
                         + deal.getPropertyManagement()
                         + deal.getLeasingFee()
                         + deal.getInsurance()
                         + deal.getMaintenanceCost()
-                        + deal.getCapitalReserve()
-                        + deal.getMortgageCost()
+                )
+        );
+        deal.setCapitalReserve(rent*DealConstants.CAPITAL_RESERVE);
+        deal.setMortgageCost(DealUtil.calculateMortgagePayment(propertyPrice));
+        deal.setMinEquityEarn(DealUtil.calculateMinEquityEarn(propertyPrice, deal.getMortgageCost()));
+        deal.setInstantEquityEarn(instantEquity);
+        deal.setCashFlow(
+                deal.getNoi()
+                - (
+                    deal.getCapitalReserve()
+                    + deal.getMortgageCost()
                 )
         );
         return deal;
