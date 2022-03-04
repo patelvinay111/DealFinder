@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.ArrayList;
 
 /**
- * @author vinay.patel@amobee.com
+ * @author Vinay Patel
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Response {

@@ -1,5 +1,5 @@
 /**
- * @author vinay.patel@amobee.com
+ * @author Vinay Patel
  */
 public class DealConstants {
     //API Constant

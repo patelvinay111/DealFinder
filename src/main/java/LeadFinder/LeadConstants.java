@@ -1,7 +1,7 @@
 package LeadFinder;
 
 /**
- * @author vinay.patel@amobee.com
+ * @author Vinay Patel
  */
 public class LeadConstants {
 

@@ -3,7 +3,8 @@ package api.main;
 import LeadFinder.LeadConstants;
 import api.Response.Listing;
 import api.Response.Response;
-import javafx.util.Pair;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -14,32 +15,28 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * @author vinay.patel@amobee.com
+ * @author Vinay Patel
  */
 public class Main {
 
     public static void main(String[] args){
         ArrayList<Pair> areas = new ArrayList<Pair>();
-        areas.add(new Pair("Dallas", "TX"));
-        areas.add(new Pair("Fort Worth", "TX"));
-        areas.add(new Pair("Phoenix", "AZ"));
-        areas.add(new Pair("Plano", "TX"));
-        areas.add(new Pair("Atlanta", "GA"));
-        areas.add(new Pair("St. Louis", "MO"));
+        areas.add(new MutablePair("Birmingham", "AL"));
+        areas.add(new MutablePair("Huntsville", "AL"));
         getListings(areas);
     }
 
     private static void getListings(ArrayList<Pair> areas) {
         for(Pair p : areas) {
-            String url = "https://realtor.p.rapidapi.com/properties/list-for-sale?" +
+            String url = "https://realty-in-us.p.rapidapi.com/properties/list-for-sale?" +
                     "price_min=135000" +
-                    "&price_max=225000" +
+                    "&price_max=220000" +
                     "&beds_min=3" +
-                    "&baths_min=2" +
+                    "&baths_min=1" +
                     "&sqft_min=1000" +
                     "&lot_sqft_min=3000" +
-                    "&radius=20" +
-                    "&prop_type=single_family" +
+                    "&radius=35" +
+                    "&prop_type=single_family,condo" +
                     "&sort=relevance" +
                     "&is_pending=false" +
                     "&is_foreclosure=false" +
@@ -50,7 +47,7 @@ public class Main {
                     "&limit=200";
 
             HttpHeaders headers = new HttpHeaders();
-            headers.set("x-rapidapi-host", "realtor.p.rapidapi.com");
+            headers.set("x-rapidapi-host", "realty-in-us.p.rapidapi.com");
             headers.set("x-rapidapi-key", "8bae55c801msh9b4481d2bfb4c36p1f69f9jsn98f191d0e3f6");
             headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
             HttpEntity entity = new HttpEntity(headers);
@@ -106,8 +103,7 @@ public class Main {
                         "leads(property_id, address, city, area, asking_price, property_type, bed, bath, construction, lot, url, " +
                         "is_new_construction, last_update, prop_status, list_date, photo, baths_half, baths_full, photo_count, lat, lon, is_new_listing) " +
                         "VALUES " +
-                        String.format("('%s', '%s' , '%s', '%s' , %f , '%s', %f , %f , %f , %f , '%s', %b, '%s', '%s', '%s', '%s', %f, %f, %f, %f, %f, " +
-                                        "%b) ",
+                        String.format("('%s', '%s' , '%s', '%s' , %f , '%s', %f , %f , %f , %f , '%s', %b, '%s', '%s', '%s', '%s', %f, %f, %f, %f, %f, %b)",
                                 l.getProperty_id(),
                                 address,
                                 city,

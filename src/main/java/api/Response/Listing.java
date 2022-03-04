@@ -3,7 +3,7 @@ package api.Response;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
- * @author vinay.patel@amobee.com
+ * @author Vinay Patel
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Listing {

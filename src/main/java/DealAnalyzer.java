@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 /**
- * @author vinay.patel@amobee.com
+ * @author Vinay Patel
  */
 public class DealAnalyzer {
 
