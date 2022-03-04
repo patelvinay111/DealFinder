@@ -1,4 +1,4 @@
-package api.Response;
+package model.leads;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

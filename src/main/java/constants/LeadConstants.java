@@ -1,4 +1,4 @@
-package LeadFinder;
+package constants;
 
 /**
  * @author Vinay Patel

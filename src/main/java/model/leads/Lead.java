@@ -1,4 +1,4 @@
-package LeadFinder;
+package model.leads;
 
 /**
  * @author Vinay Patel

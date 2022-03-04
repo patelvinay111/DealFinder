@@ -1,3 +1,7 @@
+package model.deal;
+
+import constants.DealConstants;
+
 /**
  * @author Vinay Patel
  */

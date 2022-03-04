@@ -1,8 +1,8 @@
-package api.main;
+package LeadFinder;
 
-import LeadFinder.LeadConstants;
-import api.Response.Listing;
-import api.Response.Response;
+import constants.LeadConstants;
+import model.leads.Listing;
+import model.leads.Response;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.*;
@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 /**
  * @author Vinay Patel
  */
-public class Main {
+public class LeadGenerator {
 
     public static void main(String[] args){
         ArrayList<Pair> areas = new ArrayList<Pair>();

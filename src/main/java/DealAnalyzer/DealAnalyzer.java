@@ -1,7 +1,12 @@
+package DealAnalyzer;
+
+import constants.DealConstants;
+import model.deal.Deal;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import util.DealUtil;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.BufferedReader;
@@ -50,7 +55,7 @@ public class DealAnalyzer {
                 leads.put(address, price);
             }
             rs.close();
-        } catch ( Exception e ) {
+        } catch (Exception e) {
             System.err.println( e.getClass().getName()+": "+ e.getMessage() );
             System.exit(1);
         }
