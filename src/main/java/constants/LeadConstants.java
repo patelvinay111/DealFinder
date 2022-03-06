@@ -12,12 +12,4 @@ public class LeadConstants {
     public static String ADDRESS_REGEX = "^\\d{1,6}\\s([0-9A-z]+\\s?\\b){2,3},\\s([A-z]+\\s?\\b){1,5},\\s[A-Z]{2}\\s\\d{5}";
     public static String STREET_REGEX = "^\\d{1,6}\\s([0-9A-z]+\\s?\\b){2,3}";
 
-    //Crawl Constants
-    public static int MIN_WAIT = 21000;
-    public static int MAX_WAIT = 31000;
-
-    public static String urlifyCity(String city) {
-        return city.replace(", ", "_").replace(" ", "-");
-    }
-
 }
