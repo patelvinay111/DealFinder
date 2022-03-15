@@ -85,12 +85,14 @@ ALTER TABLE public.leads OWNER TO postgres;
 
 CREATE VIEW public.daily_hunt AS
  SELECT d.property_name,
-    d.rent_to_price,
+    l.area,
+    d.rent,
     d.cash_flow,
+    d.rent_to_price,
     l.url
    FROM (public.deals d
      LEFT JOIN public.leads l ON (((d.property_name)::text = (l.address)::text)))
-  WHERE (((l.city)::text <> (l.area)::text) AND (d.rent_to_price > (0.6)::double precision) AND (d.rent_to_price < (0.75)::double precision))
+  WHERE (((l.city)::text <> (l.area)::text) AND (d.rent_to_price > (0.65)::double precision) AND (d.rent_to_price < (0.85)::double precision) AND (d.rent > (1000)::double precision) AND (d.rent < (1450)::double precision))
   ORDER BY d.rent_to_price DESC;
 
 

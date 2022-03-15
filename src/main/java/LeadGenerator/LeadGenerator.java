@@ -22,8 +22,9 @@ public class LeadGenerator {
 
     public static void main(String[] args){
         ArrayList<Pair> areas = new ArrayList<Pair>();
-        areas.add(new MutablePair("Birmingham", "AL"));
         areas.add(new MutablePair("Huntsville", "AL"));
+        areas.add(new MutablePair("Birmingham", "AL"));
+        areas.add(new MutablePair("Atlanta", "GA"));
         getListings(areas);
     }
 
@@ -31,7 +32,7 @@ public class LeadGenerator {
         for(Pair p : areas) {
             String url = "https://realty-in-us.p.rapidapi.com/properties/list-for-sale?" +
                     "price_min=135000" +
-                    "&price_max=220000" +
+                    "&price_max=210000" +
                     "&beds_min=3" +
                     "&baths_min=1" +
                     "&sqft_min=1000" +
@@ -55,6 +56,7 @@ public class LeadGenerator {
 
             RestTemplate restTemplate = new RestTemplate();
             Response response = restTemplate.exchange(url, HttpMethod.GET, entity, Response.class).getBody();
+            System.out.println(url);
             System.out.println("Number of listings found in " + p.getKey()+ ", " + p.getValue() + ": " + response.getMatching_rows());
             saveToDb(response, p);
         }

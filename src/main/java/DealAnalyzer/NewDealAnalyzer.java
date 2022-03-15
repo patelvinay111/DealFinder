@@ -81,43 +81,41 @@ public class NewDealAnalyzer {
                 LOGGER.info("Unable to parse the rent info for " + address);
             }
 
-            if (rent > 0) {
-                //Analyse the deal
-                double askingPrice = leads.get(address);
-                Deal deal = DealUtil.createDeal(address, askingPrice, rent);
+            //Analyse the deal
+            double askingPrice = leads.get(address);
+            Deal deal = DealUtil.createDeal(address, askingPrice, rent);
 
-                String insertStmt = "INSERT INTO " +
-                        "deals(property_name, rent_to_price, cash_flow, min_equity_earn, asking_price, rent, vacancy_cost, property_tax, property_managent, leasing_fee, " +
-                        "insurance, maintenance_cost, capital_reserve, mortgage_payment, noi)" +
-                        "VALUES " +
-                        "(" +
-                        String.format("'%s', '%f', '%f', %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f", deal.getName(),
-                                deal.getRentToPrice(), deal.getCashFlow(), deal.getMinEquityEarn(), deal.getPropertyPrice(),
-                                deal.getRent(), deal.getVacancyCost(), deal.getPropertyTax(), deal.getPropertyManagement(),
-                                deal.getLeasingFee(), deal.getInsurance(), deal.getMaintenanceCost(), deal.getCapitalReserve(),
-                                deal.getMortgageCost(), deal.getNoi()) +
-                        ") " +
-                        "ON conflict (property_name) DO " +
-                        "UPDATE " +
-                        "SET rent_to_price = excluded.rent_to_price, " +
-                        "min_equity_earn = excluded.min_equity_earn, " +
-                        "cash_flow = excluded.cash_flow, " +
-                        "asking_price = excluded.asking_price, " +
-                        "rent = excluded.rent, " +
-                        "vacancy_cost = excluded.vacancy_cost, " +
-                        "property_tax = excluded.property_tax, " +
-                        "property_managent = excluded.property_managent, " +
-                        "leasing_fee = excluded.leasing_fee, " +
-                        "insurance = excluded.insurance, " +
-                        "maintenance_cost = excluded.maintenance_cost, " +
-                        "capital_reserve = excluded.capital_reserve, " +
-                        "mortgage_payment = excluded.mortgage_payment, " +
-                        "noi = excluded.noi;";
-                try {
-                    stmt.executeUpdate(insertStmt);
-                } catch (Exception e) {
-                    LOGGER.info("Failed to execute: " + insertStmt);
-                }
+            String insertStmt = "INSERT INTO " +
+                    "deals(property_name, rent_to_price, cash_flow, min_equity_earn, asking_price, rent, vacancy_cost, property_tax, property_managent, leasing_fee, " +
+                    "insurance, maintenance_cost, capital_reserve, mortgage_payment, noi)" +
+                    "VALUES " +
+                    "(" +
+                    String.format("'%s', '%f', '%f', %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f", deal.getName(),
+                            deal.getRentToPrice(), deal.getCashFlow(), deal.getMinEquityEarn(), deal.getPropertyPrice(),
+                            deal.getRent(), deal.getVacancyCost(), deal.getPropertyTax(), deal.getPropertyManagement(),
+                            deal.getLeasingFee(), deal.getInsurance(), deal.getMaintenanceCost(), deal.getCapitalReserve(),
+                            deal.getMortgageCost(), deal.getNoi()) +
+                    ") " +
+                    "ON conflict (property_name) DO " +
+                    "UPDATE " +
+                    "SET rent_to_price = excluded.rent_to_price, " +
+                    "min_equity_earn = excluded.min_equity_earn, " +
+                    "cash_flow = excluded.cash_flow, " +
+                    "asking_price = excluded.asking_price, " +
+                    "rent = excluded.rent, " +
+                    "vacancy_cost = excluded.vacancy_cost, " +
+                    "property_tax = excluded.property_tax, " +
+                    "property_managent = excluded.property_managent, " +
+                    "leasing_fee = excluded.leasing_fee, " +
+                    "insurance = excluded.insurance, " +
+                    "maintenance_cost = excluded.maintenance_cost, " +
+                    "capital_reserve = excluded.capital_reserve, " +
+                    "mortgage_payment = excluded.mortgage_payment, " +
+                    "noi = excluded.noi;";
+            try {
+                stmt.executeUpdate(insertStmt);
+            } catch (Exception e) {
+                LOGGER.info("Failed to execute: " + insertStmt);
             }
         }
 
@@ -127,10 +125,12 @@ public class NewDealAnalyzer {
             ResultSet rs = stmt.executeQuery("SELECT * FROM daily_hunt;");
             while (rs.next()) {
                 String address = rs.getString("property_name");
-                String rent_price = new DecimalFormat("#.#").format(rs.getDouble("rent_to_price"));;
+                String area = rs.getString("area");
+                String rent = new DecimalFormat("#.##").format(rs.getDouble("rent"));;
                 String cashflow = new DecimalFormat("#.#").format(rs.getDouble("cash_flow"));
                 String url = rs.getString("url");
-                System.out.format("%32s%32s%32s%32s", address, rent_price, cashflow, url);
+                System.out.format("%-50s|%-15s|%-6s|%-8s|%32s", address, area, rent, cashflow, url);
+                System.out.println();
             }
             rs.close();
         } catch (Exception e) {
